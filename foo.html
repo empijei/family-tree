@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<!--
+Note: you should probably also take a look at the typescript examples, which are
+easier to understand since they use decorators instead of explicit calls.
+-->
+
+<head>
+    <script type="module">
+        // Load Lit from `esm.run`, this could be a local file in your node_modules,
+        // but it's simpler to fetch it from a CDN, so this example is self-contained.
+        import { html, css, LitElement } from 'https://esm.run/lit';
+
+        // Extend the LitElement type, so that Lit can do its magic.
+        export class SimpleGreeting extends LitElement {
+            // Your CSS goes here, and it's automatically applied to this component,
+            // but no other component in the DOM, thanks to the shadow-DOM.
+            static styles = css`p { color: blue }`;
+
+            // These can be set by who uses this module, in this case you can see
+            // how it's used in the <body>.
+            //
+            // When any of the properties (or states) is changed the component is
+            // automatically updated.
+            static properties = {
+                name: { type: String },
+            };
+
+            constructor() {
+                super(); // Necessary to setup the lit runtime.
+                this.name = 'Somebody'; // Define the property and set default values in the constructor.
+            }
+
+            // The core function that is called when this component is drawn the first time.
+            render() {
+                // This is your HTML, using the JS template (`${javascript_here}`) syntax.
+                // Lit takes care of escaping dangerous charaters.
+                return html`<p>Hello, ${this.name}!</p>`;
+            }
+        }
+        // Tell browser runtime that we have created this component, and say which tag name shuld
+        // be used to create it.
+        customElements.define('simple-greeting', SimpleGreeting);
+    </script>
+</head>
+
+<body>
+    <simple-greeting name="World"></simple-greeting>
+</body>
