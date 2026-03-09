@@ -24,17 +24,17 @@ export class FamilyTree extends LitElement {
       [
         1,
         {
-          Name: 'A',
-          Surname: 'B',
-          Descendants: [3, 4],
+          Name: 'L',
+          Surname: 'DP',
+          Descendants: [2],
         },
       ],
       [
         2,
         {
-          Name: 'L',
-          Surname: 'DP',
-          Descendants: [1],
+          Name: 'A',
+          Surname: 'B',
+          Descendants: [3, 4],
         },
       ],
       [
@@ -59,9 +59,8 @@ export class FamilyTree extends LitElement {
       <span class="label">Famiglia ${this.family.Name}</span
       ><family-tree-descendants
         lvl="1"
-        .onlyChild="${true}"
-        .descendants="${this.family}"
-        .personID="${2}"
+        .family="${this.family}"
+        .siblings="${[1]}"
       ></family-tree-descendants>
     </div>`;
   }

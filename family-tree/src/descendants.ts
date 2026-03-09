@@ -88,35 +88,41 @@ export class FamilyTreeDescendants extends LitElement {
   @property({ attribute: false })
   family!: Family;
 
-  me!: Person;
-
   @property({ attribute: false })
-  private _personID: ID = 0;
-
-  public get personID(): ID {
-    return this._personID;
-  }
-
-  public set personID(value: ID) {
-    this._personID = value;
-    this.me = this.family.People.get(this._personID)!;
-  }
-
-  @property({ type: Boolean })
-  onlyChild?: boolean;
+  siblings: ID[] = [];
 
   personOverview(id: ID): string {
     const p = this.family.People.get(id)!;
     return `${p.Name} ${p.Surname}`;
   }
 
-  descDesc(id: ID) {
-    const p = this.family.People.get(id)!;
-    const descs = p.Descendants?.map(id => this.family.People.get(id));
-    return descs;
+  descDesc(descID: ID): ID[] {
+    const p = this.family.People.get(descID)!;
+    if (!p.Descendants) {
+      return [];
+    }
+    return p.Descendants;
   }
 
   render() {
+    if (this.siblings.length === 0) {
+      return html``;
+    }
+    return html`<div class="branch lv${this.lvl}">
+      ${map(
+        this.siblings,
+        descID =>
+          html`<div class="entry ${this.siblings.length === 1 ? 'sole' : ''}">
+            <span class="label">${this.personOverview(descID)}</span>
+            <family-tree-descendants
+              .lvl=${this.lvl + 1}
+              .family="${this.family}"
+              .siblings="${this.descDesc(descID)}"
+            ></family-tree-descendants>
+          </div> `,
+      )}
+    </div>`;
+    /*
     return html`<div class="branch lv${this.lvl}">
       ${map(
         this.me.Descendants,
@@ -135,5 +141,6 @@ export class FamilyTreeDescendants extends LitElement {
           </div>`,
       )}
     </div>`;
+    */
   }
 }
