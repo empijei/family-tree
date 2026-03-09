@@ -27,7 +27,7 @@ export class FamilyTreeDescendants extends LitElement {
 
       .entry {
         position: relative;
-        min-height: 60px;
+        min-height: 80px;
       }
       .entry:before {
         content: '';
@@ -71,6 +71,9 @@ export class FamilyTreeDescendants extends LitElement {
       .entry.sole:before {
         display: none;
       }
+      .label.married {
+        margin-top: -25px;
+      }
       .entry.sole:after {
         width: 50px;
         height: 0;
@@ -96,6 +99,11 @@ export class FamilyTreeDescendants extends LitElement {
     return `${p.Name} ${p.Surname}`;
   }
 
+  person(id: ID): Person {
+    const p = this.family.People.get(id)!;
+    return p;
+  }
+
   descDesc(descID: ID): ID[] {
     const p = this.family.People.get(descID)!;
     if (!p.Descendants) {
@@ -113,7 +121,15 @@ export class FamilyTreeDescendants extends LitElement {
         this.siblings,
         descID =>
           html`<div class="entry ${this.siblings.length === 1 ? 'sole' : ''}">
-            <span class="label">${this.personOverview(descID)}</span>
+            <span class="label ${this.person(descID).Partners ? 'married' : ''}"
+              >${this.personOverview(descID)}<br />
+              ${this.person(descID).Partners
+                ? map(
+                    this.person(descID).Partners,
+                    partnerID => html`${this.personOverview(partnerID)}`,
+                  )
+                : ''}
+            </span>
             <family-tree-descendants
               .lvl=${this.lvl + 1}
               .family="${this.family}"
@@ -122,25 +138,5 @@ export class FamilyTreeDescendants extends LitElement {
           </div> `,
       )}
     </div>`;
-    /*
-    return html`<div class="branch lv${this.lvl}">
-      ${map(
-        this.me.Descendants,
-        descID =>
-          html`<div class="entry ${this.onlyChild ? 'sole' : ''}">
-            <span class="label">${this.personOverview(descID)}</span>
-
-            ${this.descDesc(descID)
-              ? html`<family-tree-descendants
-                  .lvl=${this.lvl + 1}
-                  .onlyChild="${this.descDesc(descID)?.length === 1}"
-                  .family="${this.family}"
-                  .descendants="${this.descDesc(descID)}"
-                ></family-tree-descendants>`
-              : ``}
-          </div>`,
-      )}
-    </div>`;
-    */
   }
 }

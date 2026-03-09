@@ -35,6 +35,15 @@ export class FamilyTree extends LitElement {
           Name: 'A',
           Surname: 'B',
           Descendants: [3, 4],
+          Partners: [30],
+        },
+      ],
+      [
+        30,
+        {
+          Name: 'R',
+          Surname: 'C',
+          Descendants: [],
         },
       ],
       [
@@ -51,6 +60,83 @@ export class FamilyTree extends LitElement {
           Surname: 'B C',
         },
       ],
+      // T
+
+      [
+        5,
+        {
+          Name: 'T',
+          Surname: 'DP',
+          Descendants: [6, 7],
+        },
+      ],
+      [
+        6,
+        {
+          Name: 'A',
+          Surname: 'G',
+          Descendants: [8, 9, 20, 21],
+        },
+      ],
+      [
+        7,
+        {
+          Name: 'C',
+          Surname: 'G',
+          Descendants: [10],
+        },
+      ],
+      [
+        8,
+        {
+          Name: 'M',
+          Surname: 'M',
+          Descendants: [],
+        },
+      ],
+      [
+        9,
+        {
+          Name: 'G',
+          Surname: 'M',
+          Descendants: [],
+        },
+      ],
+      [
+        10,
+        {
+          Name: 'E',
+          Surname: 'B',
+          Descendants: [],
+        },
+      ],
+
+      [
+        20,
+        {
+          Name: 'A',
+          Surname: 'G',
+          Descendants: [],
+          Partners: [41],
+        },
+      ],
+      [
+        21,
+        {
+          Name: 'A',
+          Surname: 'G',
+          Descendants: [],
+          Partners: [41],
+        },
+      ],
+      [
+        41,
+        {
+          Name: 'A',
+          Surname: 'G',
+          Descendants: [],
+        },
+      ],
     ]),
   };
 
@@ -60,7 +146,7 @@ export class FamilyTree extends LitElement {
       ><family-tree-descendants
         lvl="1"
         .family="${this.family}"
-        .siblings="${[1]}"
+        .siblings="${[1, 5]}"
       ></family-tree-descendants>
     </div>`;
   }
