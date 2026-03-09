@@ -3,7 +3,8 @@ import { css } from 'lit';
 export const Labels = css`
   .label {
     display: block;
-    min-width: 150px;
+    min-width: 250px;
+    width: 250px;
     padding: 5px 10px;
     line-height: 20px;
     text-align: center;

@@ -13,7 +13,7 @@ export class FamilyTreeDescendants extends LitElement {
       }
       .branch {
         position: relative;
-        margin-left: 250px;
+        margin-left: 350px;
       }
       .branch:before {
         content: '';
@@ -96,7 +96,7 @@ export class FamilyTreeDescendants extends LitElement {
 
   personOverview(id: ID): string {
     const p = this.family.People.get(id)!;
-    return `${p.Name} ${p.Surname}`;
+    return `${p.Name} ${p.NickName ? `${p.NickName} ` : ''}${p.Surname}`;
   }
 
   person(id: ID): Person {
@@ -118,28 +118,34 @@ export class FamilyTreeDescendants extends LitElement {
     }
     return html`<div class="branch lv${this.lvl}">
       ${map(this.siblings, descID => {
-        if (
-          this.person(descID) === undefined ||
-          this.descDesc(descID) === undefined ||
-          (this.person(descID).Partner !== 0 &&
-            this.person(this.person(descID).Partner!) === undefined)
-        ) {
+        if (this.person(descID) === undefined) {
+          console.log(`Undefined person ${descID}`);
           return html``;
         }
+        if (
+          this.person(descID).Partner &&
+          this.person(this.person(descID).Partner!) === undefined
+        ) {
+          console.log(`Undefined partner for ${this.person(descID).Partner}`);
+          return html``;
+        }
+
         return html`<div
           class="entry ${this.siblings.length === 1 ? 'sole' : ''}"
         >
           <span class="label ${this.person(descID).Partner ? 'married' : ''}"
             >${this.personOverview(descID)}<br />
-            ${this.person(descID).Partner !== 0
+            ${this.person(descID).Partner
               ? html`${this.personOverview(this.person(descID).Partner!)}`
               : ''}
           </span>
-          <family-tree-descendants
-            .lvl=${this.lvl + 1}
-            .family="${this.family}"
-            .siblings="${this.descDesc(descID)}"
-          ></family-tree-descendants>
+          ${this.descDesc(descID)
+            ? html`<family-tree-descendants
+                .lvl=${this.lvl + 1}
+                .family="${this.family}"
+                .siblings="${this.descDesc(descID)}"
+              ></family-tree-descendants>`
+            : ''}
         </div> `;
       })}
     </div>`;
