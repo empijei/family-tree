@@ -117,26 +117,31 @@ export class FamilyTreeDescendants extends LitElement {
       return html``;
     }
     return html`<div class="branch lv${this.lvl}">
-      ${map(
-        this.siblings,
-        descID =>
-          html`<div class="entry ${this.siblings.length === 1 ? 'sole' : ''}">
-            <span class="label ${this.person(descID).Partners ? 'married' : ''}"
-              >${this.personOverview(descID)}<br />
-              ${this.person(descID).Partners
-                ? map(
-                    this.person(descID).Partners,
-                    partnerID => html`${this.personOverview(partnerID)}`,
-                  )
-                : ''}
-            </span>
-            <family-tree-descendants
-              .lvl=${this.lvl + 1}
-              .family="${this.family}"
-              .siblings="${this.descDesc(descID)}"
-            ></family-tree-descendants>
-          </div> `,
-      )}
+      ${map(this.siblings, descID => {
+        if (
+          this.person(descID) === undefined ||
+          this.descDesc(descID) === undefined ||
+          (this.person(descID).Partner !== 0 &&
+            this.person(this.person(descID).Partner!) === undefined)
+        ) {
+          return html``;
+        }
+        return html`<div
+          class="entry ${this.siblings.length === 1 ? 'sole' : ''}"
+        >
+          <span class="label ${this.person(descID).Partner ? 'married' : ''}"
+            >${this.personOverview(descID)}<br />
+            ${this.person(descID).Partner !== 0
+              ? html`${this.personOverview(this.person(descID).Partner!)}`
+              : ''}
+          </span>
+          <family-tree-descendants
+            .lvl=${this.lvl + 1}
+            .family="${this.family}"
+            .siblings="${this.descDesc(descID)}"
+          ></family-tree-descendants>
+        </div> `;
+      })}
     </div>`;
   }
 }

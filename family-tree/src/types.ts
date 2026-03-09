@@ -1,17 +1,18 @@
 export type ID = Number;
 
 export interface Person {
+  ID: Number;
   Name: string;
   Surname: string;
 
   NickName?: string;
-  BirthDate?: Date;
-  DeathDate?: Date;
+  BirthDate?: string;
+  DeathDate?: string;
   BirthPlace?: string;
   DeathPlace?: string;
   Notes?: string;
 
-  Partners?: ID[];
+  Partner?: ID;
   Descendants?: ID[];
 }
 

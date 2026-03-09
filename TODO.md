@@ -1,0 +1,4 @@
+- Convert CSV into Family Object.
+- Details modal.
+- Resize based on name size.
+- Render partners.
