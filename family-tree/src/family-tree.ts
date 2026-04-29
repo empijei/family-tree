@@ -10,6 +10,9 @@ import { data } from './pii/family.js';
 export class FamilyTree extends LitElement {
   static styles = [
     css`
+      :host {
+        display: block;
+      }
       #wrapper {
         position: relative;
       }
@@ -20,14 +23,13 @@ export class FamilyTree extends LitElement {
 
   @property({ attribute: false })
   family: Family = {
-    Name: 'S',
+    Name: '',
     People: new Map<ID, Person>(data),
   };
 
   render() {
     return html` <div id="wrapper">
-      <span class="label">Famiglia ${this.family.Name}</span
-      ><family-tree-descendants
+      <family-tree-descendants
         lvl="1"
         .family="${this.family}"
         .siblings="${[91]}"

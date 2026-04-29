@@ -3,12 +3,12 @@ import { css } from 'lit';
 export const Labels = css`
   .label {
     display: block;
-    min-width: 250px;
-    width: 250px;
+    min-width: 260px;
+    width: 260px;
     padding: 5px 10px;
     line-height: 20px;
     text-align: center;
-    border: 2px solid #eee9dc;
+    border: 2px solid var(--border-color);
     border-radius: 5px;
     position: absolute;
     left: 0;

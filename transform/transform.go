@@ -6,6 +6,8 @@ import (
 	"os"
 	"slices"
 	"strconv"
+	"strings"
+	"unicode"
 )
 
 const (
@@ -51,7 +53,7 @@ type Person struct {
 func main() {
 	f := must(os.Open("pii/family.csv"))
 	data := csv.NewReader(f)
-	data.Comma = ';'
+	data.Comma = ','
 	records := must(data.ReadAll())
 	records = records[1:]
 	ppl := map[int]*Person{}
@@ -59,16 +61,19 @@ func main() {
 	for _, rec := range records {
 		p := &Person{
 			ID:         parseNumber(rec[ColID]),
-			Name:       rec[ColName],
-			Surname:    rec[ColSurname],
-			NickName:   rec[ColNickName],
-			BirthDate:  rec[ColBirthDate],
-			DeathDate:  rec[ColDeathDate],
-			BirthPlace: rec[ColBirthPlace],
-			DeathPlace: rec[ColDeathPlace],
-			Notes:      rec[ColNotes],
+			Name:       trim(rec[ColName]),
+			Surname:    trim(rec[ColSurname]),
+			NickName:   trim(rec[ColNickName]),
+			BirthDate:  parseDate(rec[ColBirthDate]),
+			DeathDate:  parseDate(rec[ColDeathDate]),
+			BirthPlace: trim(rec[ColBirthPlace]),
+			DeathPlace: trim(rec[ColDeathPlace]),
+			Notes:      trim(rec[ColNotes]),
 			Partner:    parseNumber(rec[ColPartner]),
 			childOf:    parseNumber(rec[ColChildOf]),
+		}
+		if strings.EqualFold(p.NickName, p.Name) {
+			p.NickName = ""
 		}
 		ppl[p.ID] = p
 	}
@@ -104,4 +109,26 @@ func parseNumber(s string) int {
 		return -1
 	}
 	return v
+}
+
+func parseDate(s string) string {
+	var res strings.Builder
+	for _, r := range s {
+		switch {
+		case unicode.IsNumber(r):
+			res.WriteRune(r)
+		case r == '/':
+			res.WriteRune(r)
+		}
+	}
+	ret := res.String()
+	idx := strings.LastIndex(ret, "/")
+	if idx >= 0 {
+		ret = ret[idx+1:]
+	}
+	return ret
+}
+
+func trim(s string) string {
+	return strings.TrimSpace(s)
 }

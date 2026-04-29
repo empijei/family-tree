@@ -8,7 +8,8 @@ import { Labels, Sizing } from './common-styles.js';
 export class FamilyTreeDescendants extends LitElement {
   static styles = [
     css`
-      ::host {
+      :host {
+        display: block;
         position: relative;
       }
       .branch {
@@ -18,11 +19,21 @@ export class FamilyTreeDescendants extends LitElement {
       .branch:before {
         content: '';
         width: 50px;
-        border-top: 2px solid #eee9dc;
+        border-top: 2px solid var(--border-color);
         position: absolute;
-        left: -100px;
+        left: -90px;
         top: 50%;
         margin-top: 1px;
+      }
+      .separator {
+        font-weight: bold;
+        font-size: 8pt;
+      }
+      .date {
+        font-size: smaller;
+        font-style: italic;
+        color: var(--border-color);
+        display: inline-block;
       }
 
       .entry {
@@ -32,16 +43,16 @@ export class FamilyTreeDescendants extends LitElement {
       .entry:before {
         content: '';
         height: 100%;
-        border-left: 2px solid #eee9dc;
+        border-left: 2px solid var(--border-color);
         position: absolute;
-        left: -50px;
+        left: -40px;
       }
       .entry:after {
         content: '';
-        width: 50px;
-        border-top: 2px solid #eee9dc;
+        width: 40px;
+        border-top: 2px solid var(--border-color);
         position: absolute;
-        left: -50px;
+        left: -40px;
         top: 50%;
         margin-top: 1px;
       }
@@ -64,7 +75,7 @@ export class FamilyTreeDescendants extends LitElement {
       .entry:last-child:after {
         height: 10px;
         border-top: none;
-        border-bottom: 2px solid #eee9dc;
+        border-bottom: 2px solid var(--border-color);
         border-radius: 0 0 0 10px;
         margin-top: -9px;
       }
@@ -75,7 +86,7 @@ export class FamilyTreeDescendants extends LitElement {
         margin-top: -25px;
       }
       .entry.sole:after {
-        width: 50px;
+        width: 40px;
         height: 0;
         margin-top: 1px;
         border-radius: 0;
@@ -94,9 +105,27 @@ export class FamilyTreeDescendants extends LitElement {
   @property({ attribute: false })
   siblings: ID[] = [];
 
-  personOverview(id: ID): string {
+  personOverview(id: ID) {
     const p = this.family.People.get(id)!;
-    return `${p.Name} ${p.NickName ? `${p.NickName} ` : ''}${p.Surname}`;
+    return html`${p.Name}
+      ${p.NickName ? html`<i>${p.NickName}</i> ` : ''}${p.Surname}
+      <span class="date">${this.formatDate(p)}</span>`;
+  }
+
+  formatDate(p: Person) {
+    if (!p.BirthDate && !p.DeathDate) {
+      return '';
+    }
+    let ret = '(';
+    if (p.BirthDate) {
+      ret += p.BirthDate;
+    }
+    ret += '—';
+    if (p.DeathDate) {
+      ret += p.DeathDate;
+    }
+    ret += ')';
+    return ret;
   }
 
   person(id: ID): Person {
@@ -109,14 +138,14 @@ export class FamilyTreeDescendants extends LitElement {
     if (!p.Descendants) {
       return [];
     }
-    return p.Descendants;
+    return p.Descendants.sort();
   }
 
   render() {
     if (this.siblings.length === 0) {
       return html``;
     }
-    return html`<div class="branch lv${this.lvl}">
+    return html`<div class="${this.lvl !== 1 ? 'branch' : ''} lv${this.lvl}">
       ${map(this.siblings, descID => {
         if (this.person(descID) === undefined) {
           console.log(`Undefined person ${descID}`);
@@ -136,7 +165,8 @@ export class FamilyTreeDescendants extends LitElement {
           <span class="label ${this.person(descID).Partner ? 'married' : ''}"
             >${this.personOverview(descID)}<br />
             ${this.person(descID).Partner
-              ? html`${this.personOverview(this.person(descID).Partner!)}`
+              ? html`<span class="separator">———<br /></span
+                  >${this.personOverview(this.person(descID).Partner!)}`
               : ''}
           </span>
           ${this.descDesc(descID)
